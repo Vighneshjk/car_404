@@ -39,8 +39,12 @@ const Login = () => {
         }
 
         try {
-            await login(finalEmail, password);
-            navigate('/dashboard');
+            const logRes = await login(finalEmail, password);
+            if (logRes.user.role === 'admin' || logRes.user.role === 'staff') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         } catch (err) {
             setError('Invalid credentials. Please try again.');
         } finally {

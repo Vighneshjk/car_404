@@ -106,3 +106,12 @@ class StaffListView(generics.ListAPIView):
 
     def get_queryset(self):
         return User.objects.filter(role='staff').select_related('staff_profile')
+
+
+class UserListView(generics.ListAPIView):
+    """List all registered customers (admin only)."""
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        return User.objects.filter(role='customer').select_related('customer_profile')
