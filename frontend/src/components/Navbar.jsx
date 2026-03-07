@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Car, User, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { Menu, X, Car, User, LayoutDashboard, ShieldCheck, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -29,7 +29,7 @@ const Navbar = () => {
         <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'glass-heavy py-3 shadow-lg' : 'bg-transparent py-5'}`}>
             <div className="max-width flex justify-between items-center px-5">
 
-                {/* Logo */}
+
                 <Link to="/" className="flex items-center gap-2 group">
                     <motion.div
                         whileHover={{ rotate: 360 }}
@@ -43,9 +43,9 @@ const Navbar = () => {
                     </span>
                 </Link>
 
-                {/* Desktop Links */}
+
                 <div className="hidden md:flex items-center gap-8">
-                    {/* Only show general links if NOT an admin */}
+
                     {(!user || (user.role !== 'admin' && user.role !== 'staff')) && navLinks.map((link) => (
                         <Link key={link.name} to={link.path} className={`text-sm font-medium tracking-wide relative hover:text-primary transition-colors ${location.pathname === link.path ? 'text-primary' : 'text-text-secondary'}`}>
                             {link.name}
@@ -61,18 +61,23 @@ const Navbar = () => {
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-3">
-                                    {/* Admin/Staff ONLY see Admin View */}
+
                                     {(user.role === 'admin' || user.role === 'staff') ? (
                                         <Link to="/admin" className="btn-glass flex items-center gap-2 py-2 px-6 text-xs font-bold uppercase transition-all border-secondary/30 text-secondary hover:bg-secondary/10 shadow-[0_0_15px_rgba(255,193,7,0.1)]">
                                             <ShieldCheck size={14} /> Admin Command Center
                                         </Link>
                                     ) : (
-                                        /* Customers ONLY see Dashboard */
+
                                         <Link to="/dashboard" className="btn-glass flex items-center gap-2 py-2 px-6 text-xs font-bold uppercase transition-all hover:bg-white/10">
                                             <LayoutDashboard size={14} /> My Dashboard
                                         </Link>
                                     )}
-                                    <button onClick={logout} className="ml-2 text-text-muted hover:text-primary text-[10px] font-bold uppercase tracking-widest transition-colors whitespace-nowrap border-l border-glass pl-4">Logout</button>
+                                    <button
+                                        onClick={logout}
+                                        className="btn-glass-destructive py-1.5 px-3 text-[10px] font-bold uppercase"
+                                    >
+                                        <LogOut size={12} /> Logout
+                                    </button>
                                 </div>
                             </div>
                         ) : (
@@ -90,14 +95,14 @@ const Navbar = () => {
                     </div>
                 </div>
 
-                {/* Mobile Toggle */}
+
                 <button className="md:hidden text-white hover:text-primary p-2 transition-colors" onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? <X size={28} /> : <Menu size={28} />}
                 </button>
 
             </div>
 
-            {/* Mobile Menu */}
+
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -119,8 +124,11 @@ const Navbar = () => {
                                     ) : (
                                         <Link to="/dashboard" onClick={() => setIsOpen(false)} className="btn-glass py-4 font-bold uppercase tracking-widest text-xs">My Dashboard</Link>
                                     )}
-                                    <button onClick={() => { logout(); setIsOpen(false); }} className="text-red-500 font-bold uppercase tracking-widest text-[10px] mt-6 flex items-center justify-center gap-2">
-                                        Terminate Session
+                                    <button
+                                        onClick={() => { logout(); setIsOpen(false); }}
+                                        className="btn-glass-destructive w-full py-4 text-xs font-bold uppercase tracking-widest"
+                                    >
+                                        <LogOut size={14} /> Log Out
                                     </button>
                                 </>
                             ) : (

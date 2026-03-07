@@ -1,8 +1,19 @@
-import React from 'react';
 import { PlaneTakeoff, Navigation, Timer, ExternalLink, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const AirportInfo = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleProtectedAction = (path = '/airports') => {
+        if (user) {
+            navigate(path);
+        } else {
+            navigate('/login');
+        }
+    };
 
     const airports = [
         { name: "Kempegowda Int'l (BLR)", dist: "2.5 km", time: "8 min", code: "BLR" },
@@ -19,7 +30,7 @@ const AirportInfo = () => {
                 className="glass rounded-3xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 shadow-2xl"
             >
 
-                {/* Visual Side */}
+
                 <div className="relative h-[400px] lg:h-auto overflow-hidden">
                     <motion.img
                         initial={{ scale: 1.1 }}
@@ -44,7 +55,7 @@ const AirportInfo = () => {
                     </motion.div>
                 </div>
 
-                {/* Content Side */}
+
                 <div className="p-10 md:p-16">
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
@@ -96,6 +107,7 @@ const AirportInfo = () => {
                         </div>
 
                         <motion.button
+                            onClick={() => handleProtectedAction('/airports')}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             className="flex items-center gap-2 mt-10 text-primary font-bold hover:underline transition-all"

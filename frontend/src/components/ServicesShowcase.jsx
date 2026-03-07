@@ -1,8 +1,19 @@
-import React from 'react';
 import { ShieldCheck, Waves, CornerUpRight, MapPin, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const ServicesShowcase = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleProtectedAction = (path = '/services') => {
+        if (user) {
+            navigate(path);
+        } else {
+            navigate('/login');
+        }
+    };
 
     const services = [
         {
@@ -73,7 +84,10 @@ const ServicesShowcase = () => {
                         Precision engineering meets world-class care at our airport-adjacent facility.
                         We take your vehicle's perfection as a 404 error—it shouldn't exist.
                     </p>
-                    <button className="flex items-center gap-2 font-semibold hover:text-primary transition-colors">
+                    <button
+                        onClick={() => handleProtectedAction('/services')}
+                        className="flex items-center gap-2 font-semibold hover:text-primary transition-colors"
+                    >
                         Explore Full Price List <CornerUpRight size={18} />
                     </button>
                 </motion.div>
@@ -92,7 +106,7 @@ const ServicesShowcase = () => {
                         variants={item}
                         className="glass p-10 rounded-2xl relative group overflow-hidden transition-all duration-300"
                     >
-                        {/* Background Ornament */}
+
                         <motion.div
                             className={`absolute -top-10 -right-10 w-40 h-40 opacity-10 rounded-full bg-${service.color}`}
                             whileHover={{ scale: 1.5, opacity: 0.2 }}
@@ -127,6 +141,7 @@ const ServicesShowcase = () => {
                             </div>
 
                             <motion.button
+                                onClick={() => handleProtectedAction('/services')}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 className="w-full btn-glass flex justify-between items-center group-hover:bg-primary/20 group-hover:border-primary/50 transition-all"

@@ -1,9 +1,20 @@
 import React from 'react';
 import { CheckCircle2, Circle, Clock, Car, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const TrackingShowcase = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleProtectedAction = (path) => {
+        if (user) {
+            navigate(path);
+        } else {
+            navigate('/login');
+        }
+    };
 
     const steps = [
         { name: "Arrival & Inspection", done: true, time: "10:00 AM" },
@@ -18,7 +29,7 @@ const TrackingShowcase = () => {
         <section className="section-padding bg-darker relative overflow-hidden">
             <div className="max-width grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
-                {/* Visual Side */}
+
                 <div className="relative group">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -27,7 +38,7 @@ const TrackingShowcase = () => {
                         viewport={{ once: true }}
                         className="glass-heavy p-8 rounded-3xl aspect-square flex flex-col justify-between overflow-hidden relative shadow-2xl"
                     >
-                        {/* Car Silhouette Background */}
+
                         <Car size={300} className="absolute -bottom-20 -right-20 text-white/5 rotate-12" />
 
                         <div className="flex justify-between items-start">
@@ -47,7 +58,7 @@ const TrackingShowcase = () => {
                         </div>
 
                         <div className="mt-10 relative space-y-8 pl-8">
-                            {/* Vertical Line */}
+
                             <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-white/10" />
 
                             {steps.map((step, idx) => (
@@ -89,7 +100,7 @@ const TrackingShowcase = () => {
                         </div>
                     </motion.div>
 
-                    {/* Drifting Card */}
+
                     <motion.div
                         initial={{ x: 50, opacity: 0 }}
                         whileInView={{ x: 0, opacity: 1 }}
@@ -118,7 +129,7 @@ const TrackingShowcase = () => {
                     </motion.div>
                 </div>
 
-                {/* Content Side */}
+
                 <div className="max-width md:max-w-xl">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
@@ -161,12 +172,12 @@ const TrackingShowcase = () => {
                             </div>
                         </div>
 
-                        <Link
-                            to="/dashboard"
+                        <button
+                            onClick={() => handleProtectedAction('/dashboard')}
                             className="btn-primary px-10 py-5 text-lg"
                         >
                             Track Your Active Booking
-                        </Link>
+                        </button>
                     </motion.div>
                 </div>
 

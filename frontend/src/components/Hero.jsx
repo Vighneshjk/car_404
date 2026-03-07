@@ -1,15 +1,26 @@
 import React from 'react';
 import { ChevronRight, Play, Star, Shield, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Hero = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleProtectedAction = (path) => {
+        if (user) {
+            navigate(path);
+        } else {
+            navigate('/login');
+        }
+    };
     return (
         <section className="relative h-screen flex items-center overflow-hidden bg-bg-deep">
 
-            {/* Background Image */}
+
             <div className="absolute inset-0 z-0">
-                {/* Gradient Overlay */}
+
                 <div
                     className="absolute inset-0 z-10"
                     style={{
@@ -27,7 +38,7 @@ const Hero = () => {
                 />
             </div>
 
-            {/* Content */}
+
             <div className="max-width relative px-5 w-full" style={{ zIndex: 100 }}>
                 <div className="max-w-3xl">
 
@@ -75,7 +86,10 @@ const Hero = () => {
                         transition={{ duration: 0.8, delay: 0.6 }}
                         className="flex flex-col sm:flex-row items-center gap-4"
                     >
-                        <Link to="/bookings" className="w-full sm:w-auto">
+                        <button
+                            onClick={() => handleProtectedAction('/bookings')}
+                            className="w-full sm:w-auto"
+                        >
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -83,19 +97,11 @@ const Hero = () => {
                             >
                                 Book Your Slot <ChevronRight size={20} />
                             </motion.button>
-                        </Link>
-                        <button className="flex items-center gap-3 text-white font-semibold hover:text-primary transition-colors px-4 py-2 group">
-                            <motion.div
-                                whileHover={{ scale: 1.2 }}
-                                className="w-12 h-12 rounded-full glass border border-glass flex items-center justify-center group-hover:bg-primary/20 transition-all"
-                            >
-                                <Play size={18} fill="white" className="ml-1" />
-                            </motion.div>
-                            Watch Process
                         </button>
+
                     </motion.div>
 
-                    {/* Feature Badges */}
+
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
