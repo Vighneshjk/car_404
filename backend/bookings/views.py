@@ -18,7 +18,7 @@ class IsAdminOrStaff(permissions.BasePermission):
         return request.user.is_authenticated and request.user.role in ['admin', 'staff']
 
 
-# ─── Time Slots ──────────────────────────────────────────────────────────────
+
 
 class TimeSlotListView(generics.ListAPIView):
     """Public: list all available time slots, filterable by date."""
@@ -41,7 +41,7 @@ class TimeSlotManageView(generics.ListCreateAPIView):
     queryset = TimeSlot.objects.all().order_by('date', 'start_time')
 
 
-# ─── Parking ─────────────────────────────────────────────────────────────────
+
 
 class ParkingZoneListView(generics.ListAPIView):
     """List all parking zones with available count."""
@@ -61,7 +61,7 @@ class ParkingSlotListView(generics.ListAPIView):
         return ParkingSlot.objects.filter(is_active=True).select_related('zone')
 
 
-# ─── Bookings ─────────────────────────────────────────────────────────────────
+
 
 class BookingListCreateView(generics.ListCreateAPIView):
     """Create a booking or list bookings."""

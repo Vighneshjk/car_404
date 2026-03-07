@@ -39,6 +39,6 @@ class VehicleDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Vehicle.objects.filter(is_active=True).select_related('owner', 'category')
 
     def perform_destroy(self, instance):
-        # Soft delete
+
         instance.is_active = False
         instance.save()

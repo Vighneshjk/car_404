@@ -43,7 +43,7 @@ const Services = () => {
         <main className="min-h-screen bg-deep">
             <Navbar />
 
-            {/* Header */}
+
             <header className="pt-40 pb-20 px-5 bg-darker border-b border-glass relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
                 <div className="max-width text-center">
@@ -58,7 +58,7 @@ const Services = () => {
                 </div>
             </header>
 
-            {/* Filters */}
+
             <section className="sticky top-[80px] z-40 glass py-6 border-b border-glass px-5">
                 <div className="max-width flex flex-wrap items-center justify-between gap-6">
                     <div className="flex bg-white/5 p-1 rounded-xl glass border border-glass">
@@ -91,7 +91,7 @@ const Services = () => {
                 </div>
             </section>
 
-            {/* Grid */}
+
             <section className="section-padding max-width px-5">
                 {loading ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

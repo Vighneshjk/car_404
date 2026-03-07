@@ -117,7 +117,7 @@ class Booking(models.Model):
         null=True, blank=True, related_name='bookings'
     )
 
-    # Services selected (can be multiple)
+
     car_wash_services = models.ManyToManyField(
         'services.CarWashService', blank=True, related_name='bookings'
     )
@@ -154,11 +154,11 @@ class Booking(models.Model):
     def cancel(self):
         if self.status in [self.STATUS_PENDING, self.STATUS_CONFIRMED]:
             self.status = self.STATUS_CANCELLED
-            # Release parking slot
+
             if self.parking_slot:
                 self.parking_slot.status = ParkingSlot.AVAILABLE
                 self.parking_slot.save()
-            # Release time slot count
+
             if self.time_slot.booked_count > 0:
                 self.time_slot.booked_count -= 1
                 self.time_slot.save()

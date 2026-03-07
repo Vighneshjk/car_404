@@ -50,10 +50,10 @@ const AdminDashboard = () => {
         setUpdatingId(id);
         try {
             await api.patch(`/bookings/${id}/update-status/`, { status: newStatus });
-            // Refresh local state
+
             const updatedBookings = bookings.map(b => b.id === id ? { ...b, status: newStatus, status_display: newStatus.toUpperCase() } : b);
             setBookings(updatedBookings);
-            // Also update the selected booking if the modal is open for this ID
+
             if (selectedBooking && selectedBooking.id === id) {
                 setSelectedBooking(updatedBookings.find(b => b.id === id));
             }
@@ -161,7 +161,7 @@ const AdminDashboard = () => {
                                         className="glass-heavy p-8 rounded-[2rem] border border-glass hover:border-primary/30 transition-all group"
                                     >
                                         <div className="flex flex-col xl:flex-row gap-10 items-start xl:items-center">
-                                            {/* Primary Info */}
+
                                             <div className="flex-1 min-w-[300px]">
                                                 <div className="flex items-center gap-4 mb-4">
                                                     <span className={`px-4 py-1.5 rounded-lg border text-[10px] font-bold tracking-[0.2em] uppercase ${statusColors[booking?.status]}`}>
@@ -176,7 +176,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
 
-                                            {/* Logistics */}
+
                                             <div className="flex flex-wrap gap-8 xl:border-l xl:border-glass xl:pl-10">
                                                 <div className="space-y-1">
                                                     <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">Time Slot</p>
@@ -188,7 +188,7 @@ const AdminDashboard = () => {
                                                 </div>
                                             </div>
 
-                                            {/* Actions */}
+
                                             <div className="flex items-center gap-4 ml-auto w-full xl:w-auto mt-6 xl:mt-0 xl:border-l xl:border-glass xl:pl-10">
                                                 <button
                                                     onClick={() => setSelectedBooking(booking)}
@@ -283,7 +283,7 @@ const AdminDashboard = () => {
                 )}
             </div>
 
-            {/* DETAIL MODAL */}
+
             <AnimatePresence>
                 {selectedBooking && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center px-5">
@@ -321,7 +321,7 @@ const AdminDashboard = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* User Details */}
+
                                     <div className="glass p-8 rounded-3xl space-y-6">
                                         <div className="flex items-center gap-4 mb-2">
                                             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -342,7 +342,7 @@ const AdminDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Vehicle Specs */}
+
                                     <div className="glass p-8 rounded-3xl space-y-6">
                                         <div className="flex items-center gap-4 mb-2">
                                             <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">

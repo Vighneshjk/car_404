@@ -46,7 +46,7 @@ for name, desc, icon in vehicle_cats:
     VehicleCategory.objects.get_or_create(name=name, defaults={'description': desc, 'icon': icon})
 print("✅ Vehicle categories seeded.")
 
-# ─── Service Categories ───────────────────────────────────────────────────────
+
 wash_cat, _ = ServiceCategory.objects.get_or_create(
     slug='car-wash',
     defaults={'name': 'Car Wash', 'description': 'Professional exterior and interior wash packages', 'icon': '🫧', 'order': 1}
@@ -57,7 +57,7 @@ ceramic_cat, _ = ServiceCategory.objects.get_or_create(
 )
 print("✅ Service categories seeded.")
 
-# ─── Car Wash Services ────────────────────────────────────────────────────────
+
 wash_services = [
     {
         'name': 'Basic Exterior Wash',
@@ -106,7 +106,7 @@ for s in wash_services:
     wash_objs[obj.wash_type] = obj
 print("✅ Car wash services seeded.")
 
-# ─── Ceramic Coating Types ────────────────────────────────────────────────────
+
 coatings = [
     {
         'name': 'Nano Ceramic Coat',
@@ -158,7 +158,7 @@ for c in coatings:
     coating_objs[obj.coating_type] = obj
 print("✅ Ceramic coating types seeded.")
 
-# ─── Pricing ──────────────────────────────────────────────────────────────────
+
 wash_prices = {
     'basic': {'hatchback': 299, 'sedan': 349, 'suv': 449, 'muv': 499, 'truck': 699, 'luxury': 599},
     'premium': {'hatchback': 599, 'sedan': 699, 'suv': 899, 'muv': 999, 'truck': 1299, 'luxury': 1199},
@@ -198,7 +198,7 @@ for coating_type, prices in ceramic_prices.items():
                 )
 print("✅ Pricing seeded.")
 
-# ─── Airports ─────────────────────────────────────────────────────────────────
+
 airports_data = [
     {'name': 'Kempegowda International Airport', 'code': 'BLR', 'city': 'Bengaluru', 'distance_km': 2.5, 'drive_minutes': 8},
     {'name': 'Rajiv Gandhi International Airport', 'code': 'HYD', 'city': 'Hyderabad', 'distance_km': 15.0, 'drive_minutes': 25},
@@ -208,7 +208,7 @@ for a in airports_data:
     Airport.objects.get_or_create(code=a['code'], defaults=a)
 print("✅ Airports seeded.")
 
-# ─── Facility Location ─────────────────────────────────────────────────────────
+
 if not FacilityLocation.objects.exists():
     FacilityLocation.objects.create(
         name='404 Car Care',
@@ -234,7 +234,7 @@ if not FacilityLocation.objects.exists():
     )
 print("✅ Facility location seeded.")
 
-# ─── Parking ──────────────────────────────────────────────────────────────────
+
 zone_a, _ = ParkingZone.objects.get_or_create(
     name='Zone A', defaults={'description': 'Covered premium zone', 'total_slots': 10, 'is_covered': True}
 )
@@ -253,7 +253,7 @@ for i in range(1, 7):
     ParkingSlot.objects.get_or_create(zone=zone_c, slot_number=f'C{i}')
 print("✅ Parking zones and slots seeded.")
 
-# ─── Time Slots (next 7 days) ─────────────────────────────────────────────────
+
 slot_times = [
     (time(6, 0), time(7, 0)),
     (time(7, 0), time(8, 0)),
@@ -274,7 +274,7 @@ slot_times = [
 ]
 
 today = date.today()
-for day_offset in range(14):  # Next 14 days
+for day_offset in range(14):
     slot_date = today + timedelta(days=day_offset)
     for start, end in slot_times:
         TimeSlot.objects.get_or_create(

@@ -29,7 +29,7 @@ class JobCardListView(generics.ListAPIView):
             'booking__customer', 'booking__vehicle', 'booking__time_slot'
         ).prefetch_related('assigned_staff', 'stage_logs', 'work_logs')
 
-        # Staff see their assigned jobs; admin sees all
+
         if user.role == 'staff':
             qs = qs.filter(assigned_staff=user)
 
@@ -79,7 +79,7 @@ class StageUpdateView(APIView):
 
         old_stage = job.current_stage
 
-        # Create stage log entry
+
         stage_log = JobStageLog.objects.create(
             job=job,
             stage=new_stage,
@@ -90,25 +90,25 @@ class StageUpdateView(APIView):
             stage_log.photo = photo
             stage_log.save()
 
-        # Update job card
+
         job.current_stage = new_stage
         if new_stage == JobCard.STAGE_PREP and not job.started_at:
             job.started_at = timezone.now()
         elif new_stage == JobCard.STAGE_DONE:
             job.completed_at = timezone.now()
-            # Update booking status
+
             booking = job.booking
             booking.status = Booking.STATUS_COMPLETED
             booking.completed_at = timezone.now()
             booking.save()
-            # Release parking slot
+
             if booking.parking_slot:
                 booking.parking_slot.status = ParkingSlot.AVAILABLE
                 booking.parking_slot.save()
 
         job.save()
 
-        # Work log audit
+
         WorkLog.objects.create(
             job=job,
             staff=request.user,
@@ -240,5 +240,5 @@ class CustomerDashboardStatsView(APIView):
             'total_jobs': total_jobs,
             'active_jobs': active_jobs,
             'vehicle_count': vehicle_count,
-            'rewards': 'Elite' # placeholder
+            'rewards': 'Elite'
         })

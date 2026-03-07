@@ -97,7 +97,7 @@ class DashboardSerializer(serializers.Serializer):
 class CustomerJobListSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_current_stage_display', read_only=True)
     vehicle_details = serializers.SerializerMethodField()
-    status = serializers.SerializerMethodField() # For numeric progress if needed
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = JobCard
@@ -115,7 +115,7 @@ class CustomerJobListSerializer(serializers.ModelSerializer):
         }
 
     def get_status(self, obj):
-        # Convert stage to index for progress bar
+
         stages = [s[0] for s in JobCard.JOB_STATUS_CHOICES]
         try:
             return stages.index(obj.current_stage)

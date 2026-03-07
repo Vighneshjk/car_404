@@ -39,7 +39,7 @@ const Dashboard = () => {
                 ]);
                 setStats(statsRes.data);
 
-                // Safely handle paginated or non-paginated arrays
+
                 const jobsData = jobsRes.data.results || jobsRes.data;
                 const bData = bookingsRes.data.results || bookingsRes.data;
                 const vData = vehiclesRes.data.results || vehiclesRes.data;
@@ -115,7 +115,7 @@ const Dashboard = () => {
             <div className="flex-1 flex flex-col pt-24 px-5">
                 <div className="max-width flex flex-col lg:flex-row gap-10 py-12">
 
-                    {/* Sidebar */}
+
                     <aside className="w-full lg:w-72 flex flex-col gap-3">
                         {sidebarItems.map((item) => (
                             <button
@@ -141,10 +141,10 @@ const Dashboard = () => {
                         </button>
                     </aside>
 
-                    {/* Main Content Area */}
+
                     <div className="flex-1">
 
-                        {/* OVERVIEW */}
+
                         {activeTab === 'overview' && (
                             <div className="space-y-10">
                                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -157,7 +157,7 @@ const Dashboard = () => {
                                     </Link>
                                 </div>
 
-                                {/* Stats Grid */}
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                     {[
                                         { label: 'Active Jobs', val: activeJobs.length, icon: Play, color: 'primary' },
@@ -178,7 +178,7 @@ const Dashboard = () => {
                                     ))}
                                 </div>
 
-                                {/* Active Job Highlight */}
+
                                 {activeJobs.length > 0 ? (
                                     <div className="glass-heavy p-10 rounded-[2.5rem] relative overflow-hidden border border-primary/20 bg-gradient-to-br from-bg-deep to-primary/5">
                                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 pointer-events-none blur-[100px] -translate-y-1/2 translate-x-1/2" />
@@ -238,7 +238,7 @@ const Dashboard = () => {
                                     </div>
                                 )}
 
-                                {/* Past Visits Section */}
+
                                 <div className="space-y-8 pt-6">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-2xl font-bold outfit tracking-tight">Past Visits.</h3>
@@ -276,7 +276,7 @@ const Dashboard = () => {
                             </div>
                         )}
 
-                        {/* TRACKING */}
+
                         {activeTab === 'tracking' && (
                             <div className="space-y-10">
                                 <div className="flex items-center justify-between">
@@ -384,7 +384,7 @@ const Dashboard = () => {
                             </div>
                         )}
 
-                        {/* VEHICLES */}
+
                         {activeTab === 'vehicles' && (
                             <div className="space-y-8">
                                 <div className="flex justify-between items-center">
@@ -420,12 +420,12 @@ const Dashboard = () => {
                             </div>
                         )}
 
-                        {/* ACCOUNT SETTINGS */}
+
                         {activeTab === 'settings' && (
                             <div className="space-y-10">
                                 <h2 className="text-3xl font-bold outfit">Pilot Profile.</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                    {/* Profile Summary Card */}
+
                                     <div className="md:col-span-1 space-y-6">
                                         <div className="glass-heavy p-8 rounded-3xl text-center relative overflow-hidden">
                                             <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-secondary to-accent-cyan" />
@@ -448,7 +448,7 @@ const Dashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Details Form (Read Only for now) */}
+
                                     <div className="md:col-span-2 space-y-8">
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             {[
@@ -492,7 +492,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* REGISTER VEHICLE MODAL */}
+
             {
                 showVehicleModal && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-5">

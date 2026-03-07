@@ -61,7 +61,7 @@ const Register = () => {
         e.preventDefault();
         setError('');
 
-        // Ensure email has @gmail.com if domain is missing
+
         let finalEmail = email;
         if (finalEmail && !finalEmail.includes('@')) {
             finalEmail += '@gmail.com';

@@ -48,7 +48,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         if data['password'] != data['password_confirm']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
         
-        # Password complexity validation
+
         password = data['password']
         if not re.search(r'[A-Z]', password):
             raise serializers.ValidationError({'password': 'Password must contain at least one uppercase letter.'})

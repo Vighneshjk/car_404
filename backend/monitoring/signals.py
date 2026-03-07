@@ -9,7 +9,7 @@ def create_job_card(sender, instance, created, **kwargs):
     Automatically create a JobCard when a Booking is confirmed.
     """
     if instance.status == Booking.STATUS_CONFIRMED:
-        # Check if JobCard already exists to avoid duplicates
+
         if not hasattr(instance, 'job_card'):
             JobCard.objects.create(
                 booking=instance,

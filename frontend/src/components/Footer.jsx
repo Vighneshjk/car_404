@@ -6,7 +6,7 @@ const Footer = () => {
         <footer className="bg-darker pt-24 pb-12 border-t border-glass">
             <div className="max-width px-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
 
-                {/* Brand */}
+
                 <div className="max-w-xs">
                     <div className="flex items-center gap-2 mb-8 group">
                         <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-lg">
@@ -28,7 +28,7 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Quick Links */}
+
                 <div>
                     <h4 className="text-lg font-bold outfit mb-8">Navigation</h4>
                     <ul className="space-y-4">
@@ -40,7 +40,7 @@ const Footer = () => {
                     </ul>
                 </div>
 
-                {/* Services */}
+
                 <div>
                     <h4 className="text-lg font-bold outfit mb-8">Service Areas</h4>
                     <ul className="space-y-4 text-text-muted">
@@ -50,7 +50,7 @@ const Footer = () => {
                     </ul>
                 </div>
 
-                {/* Contact */}
+
                 <div>
                     <h4 className="text-lg font-bold outfit mb-8">Get In Touch</h4>
                     <ul className="space-y-6">

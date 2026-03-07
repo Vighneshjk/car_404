@@ -13,7 +13,7 @@ const Bookings = () => {
     const [form, setForm] = useState({ vehicle: '', timeSlot: '', parkingSlot: '', selectedServices: [], selectedCoatings: [], specialRequests: '' });
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
-    // Vehicle Registration State
+
     const [showVehicleModal, setShowVehicleModal] = useState(false);
     const [registering, setRegistering] = useState(false);
     const [vehicleForm, setVehicleForm] = useState({
@@ -131,7 +131,7 @@ const Bookings = () => {
                 ceramic_coatings: form.selectedCoatings,
                 special_requests: form.specialRequests
             });
-            setStep(4); // Payment step
+            setStep(4);
         } catch (err) {
             alert('Failed to create booking. Please check slot availability.');
         } finally {
@@ -177,7 +177,7 @@ const Bookings = () => {
             <section className="flex-1 pt-32 pb-24 px-5">
                 <div className="max-width max-w-4xl">
 
-                    {/* Stepper Header */}
+
                     <div className="flex justify-between items-center mb-12 relative px-4">
                         <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/10 -translate-y-1/2 z-0" />
                         {[1, 2, 3].map(i => (
@@ -194,7 +194,7 @@ const Bookings = () => {
 
                     <div className="glass-heavy rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
 
-                        {/* Step 1: Vehicle Selection */}
+
                         {step === 1 && (
                             <div className="space-y-8">
                                 <div className="text-center">
@@ -255,7 +255,7 @@ const Bookings = () => {
                             </div>
                         )}
 
-                        {/* Step 2: Service Selection */}
+
                         {step === 2 && (
                             <div className="space-y-8">
                                 <div className="text-center">
@@ -264,7 +264,7 @@ const Bookings = () => {
                                 </div>
 
                                 <div className="space-y-10">
-                                    {/* Car Wash Section */}
+
                                     <div>
                                         <div className="flex items-center gap-3 mb-6">
                                             <Waves className="text-secondary" size={24} />
@@ -300,7 +300,7 @@ const Bookings = () => {
                                         </div>
                                     </div>
 
-                                    {/* Ceramic Coating Section */}
+
                                     <div className="pt-6 border-t border-glass">
                                         <div className="flex items-center gap-3 mb-6">
                                             <ShieldCheck className="text-primary" size={24} />
@@ -336,7 +336,7 @@ const Bookings = () => {
                                         </div>
                                     </div>
 
-                                    {/* Parking Info Header */}
+
                                     <div className="glass p-6 rounded-2xl flex items-center gap-4 border-accent-cyan/20">
                                         <div className="w-12 h-12 rounded-full bg-accent-cyan/10 flex items-center justify-center text-accent-cyan">
                                             <MapPin size={24} />
@@ -364,7 +364,7 @@ const Bookings = () => {
                             </div>
                         )}
 
-                        {/* Step 3: Slots & Date */}
+
                         {step === 3 && (
                             <div className="space-y-8">
                                 <div className="text-center">
@@ -373,7 +373,7 @@ const Bookings = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                    {/* Date & Time */}
+
                                     <div className="space-y-6">
                                         <div className="bg-white/5 p-4 rounded-xl border border-glass">
                                             <Calendar size={18} className="inline mr-3 text-primary" />
@@ -403,7 +403,7 @@ const Bookings = () => {
                                         </div>
                                     </div>
 
-                                    {/* Parking */}
+
                                     <div className="space-y-6">
                                         <label className="text-xs font-bold tracking-widest text-text-muted uppercase mb-4 block">Parking Zone</label>
                                         <div className="grid grid-cols-1 gap-3 pr-2">
@@ -450,7 +450,7 @@ const Bookings = () => {
                             </div>
                         )}
 
-                        {/* Step 4: Payment */}
+
                         {step === 4 && (
                             <div className="space-y-10">
                                 <div className="text-center">
@@ -459,7 +459,7 @@ const Bookings = () => {
                                 </div>
 
                                 <div className="flex flex-col md:flex-row items-center justify-center gap-12 py-6">
-                                    {/* QR Display */}
+
                                     <div className="relative group">
                                         <div className="absolute -inset-4 bg-primary/20 rounded-[2rem] blur-2xl group-hover:bg-primary/30 transition-all opacity-50" />
                                         <div className="relative glass-heavy p-6 rounded-[2rem] border border-white/10 shadow-2xl">
@@ -476,7 +476,7 @@ const Bookings = () => {
                                         </div>
                                     </div>
 
-                                    {/* Order Summary */}
+
                                     <div className="flex-1 max-w-sm space-y-6">
                                         <div className="glass p-8 rounded-2xl border border-glass">
                                             <h3 className="text-xs font-bold tracking-widest text-text-muted uppercase mb-6">Service Summary</h3>
@@ -512,7 +512,7 @@ const Bookings = () => {
                             </div>
                         )}
 
-                        {/* Step 5: Success */}
+
                         {step === 5 && (
                             <div className="text-center py-12">
                                 <div className="w-24 h-24 bg-primary/20 text-primary rounded-full flex items-center justify-center mx-auto mb-10 shadow-[0_0_50px_rgba(255,61,0,0.3)]">
@@ -533,7 +533,7 @@ const Bookings = () => {
                 </div>
             </section>
 
-            {/* REGISTER VEHICLE MODAL */}
+
             {showVehicleModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-5">
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowVehicleModal(false)} />

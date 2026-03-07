@@ -25,7 +25,7 @@ const Login = () => {
         setLoading(true);
         setError('');
 
-        // Ensure email has @gmail.com if domain is missing
+
         let finalEmail = email;
         if (finalEmail && !finalEmail.includes('@')) {
             finalEmail += '@gmail.com';
@@ -63,7 +63,7 @@ const Login = () => {
                     transition={{ duration: 0.5 }}
                     className="glass p-6 md:p-8 rounded-3xl w-full max-w-sm shadow-2xl relative overflow-hidden"
                 >
-                    {/* Background Detail */}
+
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
                     <div className="relative z-10">

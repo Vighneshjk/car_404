@@ -19,7 +19,7 @@ User = get_user_model()
 def seed_extra_data():
     print("🌱 Seeding more data for testing...")
     
-    # 1. Ensure test user exists
+
     user, _ = User.objects.get_or_create(
         email='test@gmail.com',
         defaults={
@@ -32,7 +32,7 @@ def seed_extra_data():
         user.save()
         print(f"✅ User test@gmail.com created.")
 
-    # 2. Add some vehicles for test user
+
     categories = list(VehicleCategory.objects.all())
     if not categories:
         print("❌ No vehicle categories found. Run seed.py first.")
@@ -60,7 +60,7 @@ def seed_extra_data():
         )
     print("✅ Test vehicles added.")
 
-    # 3. Create some active bookings and jobs
+
     my_vehicles = Vehicle.objects.filter(owner=user)
     slots = list(TimeSlot.objects.filter(is_active=True)[:10])
     parking = list(ParkingSlot.objects.filter(status='available')[:10])
@@ -86,7 +86,7 @@ def seed_extra_data():
             )
             if created:
                 booking.car_wash_services.add(svc)
-                # Create a JobCard for active jobs display
+
                 JobCard.objects.get_or_create(
                     booking=booking,
                     defaults={

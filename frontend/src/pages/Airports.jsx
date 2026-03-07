@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { PlaneTakeoff, Navigation, Timer, ExternalLink, MapPin } from 'lucide-react';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const Airports = () => {
-    // Mocking expanded airport data for global footprint
+
     const airports = [
         { name: 'Kempegowda Int.', code: 'BLR', dist: '1.2 km', time: '5 mins', terminal: 'T1 & T2', spots: 45 },
         { name: 'Heathrow Airport', code: 'LHR', dist: '3.4 km', time: '12 mins', terminal: 'Terminal 5', spots: 82 },
@@ -14,6 +15,7 @@ const Airports = () => {
     ];
 
     const [selectedAirport, setSelectedAirport] = useState(airports[0]);
+    const navigate = useNavigate();
 
     return (
         <main className="min-h-screen bg-deep flex flex-col">
@@ -38,7 +40,7 @@ const Airports = () => {
 
             <section className="section-padding max-width px-5 grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
 
-                {/* Locations Grid */}
+
                 <div className="space-y-6">
                     <h2 className="text-3xl font-bold outfit tracking-tight mb-10 flex items-center gap-4">
                         <MapPin className="text-primary" /> Active Hubs.
@@ -73,7 +75,7 @@ const Airports = () => {
                     </div>
                 </div>
 
-                {/* Spot Detail / Map Visual */}
+
                 <div className="sticky top-32">
                     <div className="glass-heavy p-2 rounded-[2.5rem] relative overflow-hidden group shadow-2xl border-white/5">
                         <div className="aspect-video w-full rounded-[2rem] bg-bg-deep relative overflow-hidden flex items-center justify-center">
@@ -107,9 +109,17 @@ const Airports = () => {
                                 </p>
                             </div>
 
-                            <button className="w-full btn-primary py-4 font-bold flex items-center justify-center gap-2 shadow-xl">
-                                Navigate to {selectedAirport.code} Facility <ExternalLink size={18} />
-                            </button>
+                            <div className="flex flex-col gap-4">
+                                <button
+                                    onClick={() => navigate('/bookings')}
+                                    className="w-full btn-primary py-4 font-bold flex items-center justify-center gap-2 shadow-xl"
+                                >
+                                    Book Parking Slot
+                                </button>
+                                <button className="w-full btn-glass py-4 font-bold flex items-center justify-center gap-2">
+                                    Navigate to {selectedAirport.code} Facility <ExternalLink size={18} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
