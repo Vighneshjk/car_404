@@ -102,10 +102,6 @@ class StageUpdateView(APIView):
             booking.completed_at = timezone.now()
             booking.save()
 
-            if booking.parking_slot:
-                booking.parking_slot.status = ParkingSlot.AVAILABLE
-                booking.parking_slot.save()
-
         job.save()
 
 

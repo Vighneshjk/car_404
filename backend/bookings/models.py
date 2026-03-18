@@ -27,7 +27,22 @@ class TimeSlot(models.Model):
 
     @property
     def is_available(self):
-        return self.is_active and self.available_slots > 0 and self.date >= timezone.now().date()
+        if not self.is_active or self.available_slots <= 0:
+            return False
+        
+        # Use localized time for correct comparison (respects settings.TIME_ZONE)
+        now = timezone.localtime(timezone.now())
+        current_date = now.date()
+        
+        if self.date < current_date:
+            return False
+        
+        if self.date == current_date:
+            # If the slot is for today, it must start at least 30 mins from now
+            threshold = (now + timezone.timedelta(minutes=30)).time()
+            return self.start_time >= threshold
+            
+        return True
 
     def clean(self):
         if self.start_time >= self.end_time:
@@ -138,6 +153,11 @@ class Booking(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+    
+    # Razorpay integration
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=200, null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -154,14 +174,6 @@ class Booking(models.Model):
     def cancel(self):
         if self.status in [self.STATUS_PENDING, self.STATUS_CONFIRMED]:
             self.status = self.STATUS_CANCELLED
-
-            if self.parking_slot:
-                self.parking_slot.status = ParkingSlot.AVAILABLE
-                self.parking_slot.save()
-
-            if self.time_slot.booked_count > 0:
-                self.time_slot.booked_count -= 1
-                self.time_slot.save()
-            self.save()
+            self.save() # Triggers signal to free resources
             return True
         return False

@@ -4,6 +4,7 @@ from .views import (
     ParkingZoneListView, ParkingSlotListView,
     BookingListCreateView, BookingDetailView,
     BookingCancelView, MyBookingsView, BookingStatusUpdateView,
+    RazorpayOrderView, RazorpayCallbackView,
 )
 
 urlpatterns = [
@@ -21,4 +22,6 @@ urlpatterns = [
     path('<int:pk>/cancel/', BookingCancelView.as_view(), name='booking-cancel'),
     path('<int:pk>/update-status/', BookingStatusUpdateView.as_view(), name='booking-update-status'),
     path('my-bookings/', MyBookingsView.as_view(), name='my-bookings'),
+    path('<int:pk>/razorpay/order/', RazorpayOrderView.as_view(), name='razorpay-order'),
+    path('razorpay/callback/', RazorpayCallbackView.as_view(), name='razorpay-callback'),
 ]

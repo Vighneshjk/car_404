@@ -23,8 +23,9 @@ class VehicleSerializer(serializers.ModelSerializer):
 
 class VehicleListSerializer(serializers.ModelSerializer):
     """Compact serializer for listings/dropdowns."""
-    category_name = serializers.CharField(source='category.get_name_display', read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_display = serializers.CharField(source='category.get_name_display', read_only=True)
 
     class Meta:
         model = Vehicle
-        fields = ['id', 'registration_number', 'make', 'model', 'year', 'color', 'category_name', 'fuel_type']
+        fields = ['id', 'registration_number', 'make', 'model', 'year', 'color', 'category', 'category_name', 'category_display', 'fuel_type']

@@ -95,16 +95,6 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         booking.ceramic_coatings.set(ceramic_coatings)
 
 
-        time_slot = booking.time_slot
-        time_slot.booked_count += 1
-        time_slot.save()
-
-
-        if booking.parking_slot:
-            booking.parking_slot.status = ParkingSlot.RESERVED
-            booking.parking_slot.save()
-
-
         from services.models import ServicePricing
         vehicle_cat = booking.vehicle.category
         total = 0

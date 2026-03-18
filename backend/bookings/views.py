@@ -11,6 +11,10 @@ from .serializers import (
     TimeSlotSerializer, ParkingZoneSerializer, ParkingSlotSerializer,
     BookingCreateSerializer, BookingDetailSerializer, BookingListSerializer
 )
+import razorpay
+from django.conf import settings
+import hmac
+import hashlib
 
 
 class IsAdminOrStaff(permissions.BasePermission):
@@ -28,10 +32,20 @@ class TimeSlotListView(generics.ListAPIView):
     filterset_fields = ['date']
 
     def get_queryset(self):
-        today = timezone.now().date()
-        return TimeSlot.objects.filter(
-            is_active=True, date__gte=today
-        ).order_by('date', 'start_time')
+        now = timezone.localtime(timezone.now())
+        today = now.date()
+        # Initial filter for active and future dates
+        qs = TimeSlot.objects.filter(is_active=True, date__gte=today)
+        
+        # We need to filter further for today's slots to ensure they haven't passed
+        # This is best done in memory or with complex Q objects, but since slots are few, 
+        # a list comprehension or filtering the IDs is fine.
+        valid_ids = []
+        for ts in qs:
+            if ts.is_available:
+                valid_ids.append(ts.id)
+        
+        return TimeSlot.objects.filter(id__in=valid_ids).order_by('date', 'start_time')
 
 
 class TimeSlotManageView(generics.ListCreateAPIView):
@@ -160,10 +174,18 @@ class BookingStatusUpdateView(APIView):
         old_status = booking.status
         booking.status = new_status
 
+        if old_status != new_status:
+            # Updating the status property will trigger the post_save signal
+            # which correctly recalculates slot counts and parking statuses.
+            pass
+
         if new_status == Booking.STATUS_CONFIRMED and not booking.confirmed_at:
             booking.confirmed_at = timezone.now()
         elif new_status == Booking.STATUS_COMPLETED and not booking.completed_at:
             booking.completed_at = timezone.now()
+        
+        # Note: We don't need to manually update parking_slot status here
+        # because the signal will catch instance.status and update it.
 
         if notes:
             booking.internal_notes = notes
@@ -174,3 +196,83 @@ class BookingStatusUpdateView(APIView):
             'booking_id': booking.booking_id,
             'status': booking.status
         })
+
+
+class RazorpayOrderView(APIView):
+    """Create a Razorpay order for a booking."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            booking = Booking.objects.get(pk=pk, customer=request.user)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not settings.RAZORPAY_KEY_ID or not settings.RAZORPAY_KEY_SECRET:
+            return Response({'error': 'Razorpay keys not configured.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        
+        # Razorpay expects amount in paise (1 INR = 100 paise)
+        amount = int(booking.final_amount * 100)
+        
+        order_data = {
+            'amount': amount,
+            'currency': 'INR',
+            'receipt': f'rcpt_{booking.booking_id}',
+            'payment_capture': 1  # Auto capture
+        }
+        
+        try:
+            order = client.order.create(data=order_data)
+            booking.razorpay_order_id = order['id']
+            booking.save()
+            return Response({
+                'order_id': order['id'],
+                'amount': amount,
+                'key_id': settings.RAZORPAY_KEY_ID,
+                'currency': 'INR',
+                'company_name': settings.COMPANY_NAME,
+                'customer_name': request.user.full_name,
+                'customer_email': request.user.email,
+                'customer_phone': request.user.phone
+            })
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RazorpayCallbackView(APIView):
+    """Verify Razorpay payment signature and update booking status."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        order_id = request.data.get('razorpay_order_id')
+        payment_id = request.data.get('razorpay_payment_id')
+        signature = request.data.get('razorpay_signature')
+
+        if not all([order_id, payment_id, signature]):
+            return Response({'error': 'Missing payment details.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            booking = Booking.objects.get(razorpay_order_id=order_id)
+        except Booking.DoesNotExist:
+            return Response({'error': 'Booking not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Verify signature
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        
+        params_dict = {
+            'razorpay_order_id': order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': signature
+        }
+
+        try:
+            client.utility.verify_payment_signature(params_dict)
+            booking.razorpay_payment_id = payment_id
+            booking.razorpay_signature = signature
+            booking.payment_status = Booking.PAYMENT_PAID
+            booking.save()
+            return Response({'message': 'Payment verified successfully.'})
+        except Exception:
+            return Response({'error': 'Payment verification failed.'}, status=status.HTTP_400_BAD_REQUEST)

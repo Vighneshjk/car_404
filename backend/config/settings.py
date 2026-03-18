@@ -140,3 +140,7 @@ CORS_ALLOW_CREDENTIALS = True
 COMPANY_NAME = config('COMPANY_NAME', default='404 Car Care')
 COMPANY_PHONE = config('COMPANY_PHONE', default='+91-9999999999')
 COMPANY_EMAIL = config('COMPANY_EMAIL', default='info@404carcare.com')
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID = config('RAZORPAY_KEY_ID', default='')
+RAZORPAY_KEY_SECRET = config('RAZORPAY_KEY_SECRET', default='')

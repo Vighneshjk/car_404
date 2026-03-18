@@ -454,7 +454,7 @@ const Dashboard = () => {
                                             {[
                                                 { label: 'Full Legal Name', val: user?.full_name, icon: ShieldCheck, color: 'primary' },
                                                 { label: 'Email Identifier', val: user?.email, icon: Bell, color: 'secondary' },
-                                                { label: 'Communication Line', val: user?.phone_number || 'No contact provided', icon: Activity, color: 'accent-cyan' },
+                                                { label: 'Communication Line', val: user?.phone || 'No contact provided', icon: Activity, color: 'accent-cyan' },
                                                 { label: 'Account Privilege', val: user?.role, icon: Zap, color: 'accent-purple' }
                                             ].map((box, bIdx) => (
                                                 <div key={bIdx} className="glass p-6 rounded-2xl border-glass hover:border-white/20 transition-all group relative min-h-[120px] flex flex-col justify-between">
