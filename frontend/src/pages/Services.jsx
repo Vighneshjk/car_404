@@ -18,8 +18,11 @@ const Services = () => {
                     api.get('/services/ceramic-coating/'),
                     api.get('/services/categories/')
                 ]);
-                setServices({ wash: washRes.data, ceramic: ceramicRes.data });
-                setCategories(catRes.data);
+                setServices({ 
+                    wash: washRes.data.results || washRes.data, 
+                    ceramic: ceramicRes.data.results || ceramicRes.data 
+                });
+                setCategories(catRes.data.results || catRes.data);
             } catch (err) {
                 console.error('Error fetching services:', err);
             } finally {
@@ -30,12 +33,12 @@ const Services = () => {
     }, []);
 
     const filteredServices = [
-        ...services.wash.map(s => ({ ...s, type: 'wash' })),
-        ...services.ceramic.map(s => ({ ...s, type: 'ceramic' }))
+        ...(Array.isArray(services?.wash) ? services.wash.map(s => ({ ...s, type: 'wash' })) : []),
+        ...(Array.isArray(services?.ceramic) ? services.ceramic.map(s => ({ ...s, type: 'ceramic' })) : [])
     ].filter(s => {
         const matchesFilter = filter === 'all' || s.type === filter;
-        const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            s.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = s?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            s?.description?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 

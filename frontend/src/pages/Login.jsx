@@ -14,12 +14,6 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleEmailBlur = () => {
-        if (email && !email.includes('@')) {
-            setEmail(email + '@gmail.com');
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -27,13 +21,9 @@ const Login = () => {
 
 
         let finalEmail = email;
-        if (finalEmail && !finalEmail.includes('@')) {
-            finalEmail += '@gmail.com';
-            setEmail(finalEmail);
-        }
 
-        if (password.length < 8) {
-            setError('Password must be at least 8 characters long.');
+        if (password.length < 4) {
+            setError('Password must be at least 4 characters long.');
             setLoading(false);
             return;
         }
@@ -105,7 +95,6 @@ const Login = () => {
                                             setEmail(e.target.value);
                                             setError('');
                                         }}
-                                        onBlur={handleEmailBlur}
                                     />
                                 </div>
                             </div>

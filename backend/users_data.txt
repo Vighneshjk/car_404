@@ -1,0 +1,13 @@
+ID   | Full Name            | Email                          | Role       | Phone           | Password (Hash)
+------------------------------------------------------------------------------------------------------------------------------------------------------
+1    | Super Admin          | admin@404carcare.com           | admin      |                 | pbkdf2_sha256$1200000$TlHyrtvUMCOunTW17t3S9D$h9Az/nvI81GSbT4jkUi1Nx6vPSCyiLWAgZA9h9bYuI0=
+2    | vighnesh             | vighnesh@gmail.com             | customer   | 07356838277     | pbkdf2_sha256$1200000$cLFg67DaEp9RYAeaai7kwM$RhIdSNEmssfAPPa/P2qgBqm6QIq6+0xnf4R/vIlGc9c=
+3    | Test User            | test@gmail.com                 | customer   | 9876543210      | pbkdf2_sha256$1200000$XM35TzX4fdqHKlP5PBRPST$Ex4/u3ZSZzrHRE92IsaMLWNxNmFtgBQ0O/ojncHuUZk=
+4    | vichu                | vichu@gmail.com                | customer   | 7356838277      | pbkdf2_sha256$1200000$qJaHhKZBM5ejwPYq0FAC98$lnwHaf4KyDPFnY5/Le1Id8kMb44OAYk1fbzcL7rjmuw=
+5    | System Administrator | admin@car                      | admin      |                 | pbkdf2_sha256$1200000$rdrXz3CvejxjLy928rEAVn$vbSZJyj5Ec32qMyKGI1Ff0qJbMfOTO8TLO36Nt3RYY8=
+6    | manu j               | manu@gmail.com                 | customer   | 7356838277      | pbkdf2_sha256$1200000$n2ar6gUFDwG7a7giiyeZVx$g6slKEhdMmmaPzZPRXnb9xNB0BpZ09TzBPCcoUlbTZg=
+7    | manoj                | manoj@gmail.com                | customer   | 9875654544      | pbkdf2_sha256$1200000$5SKVAXLcqLVTnoLvzB0G6U$cG1uLLY94GIdgHAuPXYxyj+gOdQkyF+zmrYUjp9Gqec=
+8    | jvighnesh            | jvighnesh@gmail.com            | customer   | 9875654544      | pbkdf2_sha256$1200000$Ne7uBIhvNfeFxHVsc11GAH$mW+OpsaKKrbo0sGQJbDy1G8C2P5NUap3MX2SNlltN0U=
+9    | vj                   | vj@example.com                 | admin      |                 | pbkdf2_sha256$1200000$fqhCOJsBsPp9Ax5Z3D7eM4$Je3iSG0G2sQfbN86FP55Z+xXAxljwOwG1Ds8UkzAosI=
+10   | vighneshj            | vighneshj@gmail.com            | customer   | 9875654544      | pbkdf2_sha256$1200000$GfJrckiqB6HHoIVLnMCNPl$BWmxPlaVMxWAeK9Rwa0RPd9g64TBM6ij3Mh9QkTztjQ=
+11   | manu                 | manu1@gmail.com                | customer   | 9875654544      | pbkdf2_sha256$1200000$nO3pXWJctXmeEfUHeBrn8l$vQE7L6ALR6x8D5olV04HD9jMBfAP0CgRO7wka3W+Zsc=

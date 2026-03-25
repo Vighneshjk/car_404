@@ -144,16 +144,51 @@ class BookingDetailSerializer(serializers.ModelSerializer):
 
 
 class BookingListSerializer(serializers.ModelSerializer):
-    """Compact serializer for booking lists."""
+    """Compact serializer for booking lists with details for dashboard."""
     customer_name = serializers.CharField(source='customer.full_name', read_only=True)
     vehicle_reg = serializers.CharField(source='vehicle.registration_number', read_only=True)
     time_slot_display = serializers.CharField(source='time_slot.__str__', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    
+    # Nested/Structured details expected by frontend
+    vehicle_details = serializers.SerializerMethodField()
+    time_slot_details = serializers.SerializerMethodField()
+    customer_details = serializers.SerializerMethodField()
+    total_price = serializers.DecimalField(source='final_amount', max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = Booking
         fields = [
-            'id', 'booking_id', 'customer_name', 'vehicle_reg',
-            'time_slot_display', 'status', 'status_display',
-            'final_amount', 'payment_status', 'created_at'
+            'id', 'booking_id', 'customer', 'customer_name', 'customer_details',
+            'vehicle', 'vehicle_reg', 'vehicle_details',
+            'time_slot', 'time_slot_display', 'time_slot_details',
+            'status', 'status_display', 'payment_status',
+            'final_amount', 'total_price', 'created_at'
         ]
+
+    def get_vehicle_details(self, obj):
+        v = obj.vehicle
+        return {
+            'plate_number': v.registration_number,
+            'make': v.make,
+            'model': v.model,
+            'category_name': v.category.name,
+            'color': v.color,
+            'fuel_type': v.get_fuel_type_display() if hasattr(v, 'get_fuel_type_display') else v.fuel_type
+        }
+
+    def get_time_slot_details(self, obj):
+        ts = obj.time_slot
+        return {
+            'date': ts.date.strftime('%Y-%m-%d'),
+            'start_time': ts.start_time.strftime('%I:%M %p'),
+            'end_time': ts.end_time.strftime('%I:%M %p')
+        }
+        
+    def get_customer_details(self, obj):
+        c = obj.customer
+        return {
+            'full_name': c.full_name,
+            'email': c.email,
+            'phone': c.phone
+        }

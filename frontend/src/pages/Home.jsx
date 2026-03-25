@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 
 const Home = () => {
     return (
-        <main className="relative bg-bg-deep">
+        <main className="relative bg-deep text-white">
             <Navbar />
 
             <div className="relative">

@@ -34,12 +34,27 @@ class TimeSlotListView(generics.ListAPIView):
     def get_queryset(self):
         now = timezone.localtime(timezone.now())
         today = now.date()
+        
+        date_param = self.request.query_params.get('date')
+        if date_param:
+            import datetime
+            try:
+                query_date = datetime.datetime.strptime(date_param, '%Y-%m-%d').date()
+                if query_date >= today:
+                    if not TimeSlot.objects.filter(date=query_date).exists():
+                        slots_to_create = [
+                            TimeSlot(date=query_date, start_time=datetime.time(10, 0), end_time=datetime.time(12, 0)),
+                            TimeSlot(date=query_date, start_time=datetime.time(13, 0), end_time=datetime.time(15, 0)),
+                            TimeSlot(date=query_date, start_time=datetime.time(16, 0), end_time=datetime.time(18, 0)),
+                        ]
+                        TimeSlot.objects.bulk_create(slots_to_create)
+            except ValueError:
+                pass
+
         # Initial filter for active and future dates
         qs = TimeSlot.objects.filter(is_active=True, date__gte=today)
         
         # We need to filter further for today's slots to ensure they haven't passed
-        # This is best done in memory or with complex Q objects, but since slots are few, 
-        # a list comprehension or filtering the IDs is fine.
         valid_ids = []
         for ts in qs:
             if ts.is_available:

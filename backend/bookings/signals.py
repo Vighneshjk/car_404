@@ -78,7 +78,6 @@ def _recalibrate_parking_slot(parking_slot_id):
         
         if ps.status != expected_status:
             ps.status = expected_status
-            ps.is_free = (expected_status == ParkingSlot.AVAILABLE)
-            ps.save(update_fields=['status', 'is_free'])
+            ps.save(update_fields=['status'])
     except ParkingSlot.DoesNotExist:
         pass

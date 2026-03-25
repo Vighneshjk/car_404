@@ -3,10 +3,12 @@ import { LayoutDashboard, Car, Clock, ShieldCheck, MapPin, Settings, Plus, Play,
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 import Navbar from '../components/Navbar';
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const { addNotification } = useNotification();
     const [activeTab, setActiveTab] = useState('overview');
     const [stats, setStats] = useState(null);
     const [activeJobs, setActiveJobs] = useState([]);
@@ -88,7 +90,7 @@ const Dashboard = () => {
                 owner_name: user?.full_name || ''
             });
         } catch (err) {
-            alert('Failed to register vehicle. Please check if registration number is unique.');
+            addNotification('Failed to register vehicle. Please check if registration number is unique.', 'error');
         } finally {
             setRegistering(false);
         }
@@ -193,7 +195,7 @@ const Dashboard = () => {
                                                         {activeJobs[0].status >= 7 ? 'COMPLETED' : 'ATTEMPTING'}
                                                     </div>
                                                 </div>
-                                                <h3 className="text-4xl font-bold outfit tracking-tighter mb-4 uppercase">{activeJobs[0].vehicle_details.plate_number}</h3>
+                                                <h3 className="text-4xl font-bold outfit tracking-tighter mb-4 uppercase">{activeJobs[0].vehicle_details.registration_number}</h3>
                                                 <div className="flex flex-wrap items-center gap-4 mb-8">
                                                     <span className="text-white font-bold">{activeJobs[0].vehicle_details.make} {activeJobs[0].vehicle_details.model}</span>
                                                     <div className="w-1 h-1 rounded-full bg-white/20" />
@@ -254,7 +256,7 @@ const Dashboard = () => {
                                                         <History size={24} />
                                                     </div>
                                                     <div className="flex-1">
-                                                        <p className="font-bold text-white uppercase text-base tracking-tight">{booking?.vehicle_details?.plate_number}</p>
+                                                        <p className="font-bold text-white uppercase text-base tracking-tight">{booking?.vehicle_details?.registration_number}</p>
                                                         <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mt-0.5">{booking?.time_slot_details?.date}</p>
                                                     </div>
                                                     <div className="text-green-500/50 group-hover:text-green-500 transition-colors">
@@ -305,7 +307,7 @@ const Dashboard = () => {
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-3 mb-1">
-                                                        <h3 className="text-3xl font-bold outfit tracking-tighter uppercase">{job.vehicle_details.plate_number}</h3>
+                                                        <h3 className="text-3xl font-bold outfit tracking-tighter uppercase">{job.vehicle_details.registration_number}</h3>
                                                         <span className="text-[10px] font-bold bg-white/5 py-1 px-3 rounded-md text-text-muted border border-glass tracking-widest uppercase">{job.vehicle_details.category_name || 'Premium'}</span>
                                                     </div>
                                                     <div className="flex items-center gap-4">
@@ -405,7 +407,7 @@ const Dashboard = () => {
                                                 </div>
                                                 <span className="text-[10px] font-bold tracking-[0.2em] bg-white/5 py-1 px-3 rounded-lg text-text-muted">ACTIVE GARAGE</span>
                                             </div>
-                                            <h3 className="text-3xl font-bold outfit tracking-tighter mb-2 uppercase">{v.plate_number}</h3>
+                                            <h3 className="text-3xl font-bold outfit tracking-tighter mb-2 uppercase">{v.registration_number}</h3>
                                             <p className="text-text-secondary font-bold text-sm">{v.make} {v.model}</p>
                                             <div className="mt-10 pt-6 border-t border-glass flex justify-between items-center">
                                                 <div className="flex gap-2">
@@ -420,6 +422,48 @@ const Dashboard = () => {
                             </div>
                         )}
 
+
+                        {activeTab === 'history' && (
+                            <div className="space-y-8">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-3xl font-bold outfit">Past Visits.</h2>
+                                    <p className="text-text-muted font-bold text-xs tracking-widest uppercase">Verified Records: {bookings.filter(b => b.status === 'completed').length}</p>
+                                </div>
+                                <div className="grid grid-cols-1 gap-6">
+                                    {bookings.filter(b => b.status === 'completed').length > 0 ? (
+                                        bookings.filter(b => b.status === 'completed').map((booking) => (
+                                            <div key={booking.id} className="glass p-8 rounded-3xl border border-glass flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group hover:border-green-500/30 transition-all">
+                                                <div className="flex items-center gap-6">
+                                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-green-500 transition-colors">
+                                                        <History size={32} />
+                                                    </div>
+                                                    <div>
+                                                        <div className="flex items-center gap-3 mb-1">
+                                                            <h3 className="text-2xl font-bold outfit tracking-tighter uppercase">{booking.vehicle_details?.registration_number}</h3>
+                                                            <span className="px-2 py-0.5 rounded bg-green-500/10 text-green-500 text-[10px] font-bold tracking-widest">COMPLETED</span>
+                                                        </div>
+                                                        <p className="text-text-secondary font-medium">{booking.time_slot_details?.date} • {booking.time_slot_details?.start_time}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mb-1">Total Revenue Paid</p>
+                                                    <p className="text-2xl font-bold outfit text-white">₹{booking.total_price}</p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="glass p-20 rounded-3xl text-center border-dashed border-white/5">
+                                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-text-muted opacity-20">
+                                                <History size={32} />
+                                            </div>
+                                            <h3 className="text-xl font-bold mb-2">No Service History</h3>
+                                            <p className="text-text-secondary max-w-xs mx-auto mb-8">You haven't completed any treatments yet. Your past visits will be archived here.</p>
+                                            <Link to="/bookings" className="btn-primary py-3 px-8 text-xs font-bold uppercase tracking-widest">Start Your First Treatment</Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         {activeTab === 'settings' && (
                             <div className="space-y-10">

@@ -19,15 +19,9 @@ const Register = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleEmailBlur = () => {
-        if (email && !email.includes('@')) {
-            setEmail(email + '@gmail.com');
-        }
-    };
-
     const validateForm = () => {
-        if (password.length < 8) {
-            setError('Password must be at least 8 characters long.');
+        if (password.length < 4) {
+            setError('Password must be at least 4 characters long.');
             return false;
         }
         if (password !== passwordConfirm) {
@@ -36,22 +30,6 @@ const Register = () => {
         }
         if (phone.length < 10 || phone.length > 15 || !/^\d+$/.test(phone)) {
             setError('Phone number must be between 10 and 15 digits.');
-            return false;
-        }
-        if (!/[A-Z]/.test(password)) {
-            setError('Password must contain at least one uppercase letter.');
-            return false;
-        }
-        if (!/[a-z]/.test(password)) {
-            setError('Password must contain at least one lowercase letter.');
-            return false;
-        }
-        if (!/\d/.test(password)) {
-            setError('Password must contain at least one digit.');
-            return false;
-        }
-        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-            setError('Password must contain at least one special character.');
             return false;
         }
         return true;
@@ -63,10 +41,6 @@ const Register = () => {
 
 
         let finalEmail = email;
-        if (finalEmail && !finalEmail.includes('@')) {
-            finalEmail += '@gmail.com';
-            setEmail(finalEmail);
-        }
 
         if (!validateForm()) return;
 
@@ -169,7 +143,6 @@ const Register = () => {
                                             setEmail(e.target.value);
                                             setError('');
                                         }}
-                                        onBlur={handleEmailBlur}
                                     />
                                 </div>
                             </div>

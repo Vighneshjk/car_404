@@ -38,7 +38,7 @@ class CarWashServiceSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'category', 'name', 'wash_type', 'wash_type_display',
             'description', 'includes', 'estimated_duration_minutes',
-            'is_featured', 'pricing'
+            'is_featured', 'image', 'pricing'
         ]
 
 
@@ -52,7 +52,7 @@ class CeramicCoatingTypeSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'category', 'name', 'coating_type', 'coating_type_display',
             'description', 'includes', 'warranty_months', 'gloss_level',
-            'layers', 'estimated_duration_hours', 'is_featured', 'pricing'
+            'layers', 'estimated_duration_hours', 'is_featured', 'image', 'pricing'
         ]
 
 

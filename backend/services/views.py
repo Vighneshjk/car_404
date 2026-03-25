@@ -12,6 +12,30 @@ from .serializers import (
 )
 
 
+class AdminCarWashServiceCreateView(generics.CreateAPIView):
+    queryset = CarWashService.objects.all()
+    serializer_class = CarWashServiceSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class AdminCarWashServiceUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CarWashService.objects.all()
+    serializer_class = CarWashServiceSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class AdminCeramicCoatingCreateView(generics.CreateAPIView):
+    queryset = CeramicCoatingType.objects.all()
+    serializer_class = CeramicCoatingTypeSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
+class AdminCeramicCoatingUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CeramicCoatingType.objects.all()
+    serializer_class = CeramicCoatingTypeSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+
 class VehicleCategoryListView(generics.ListAPIView):
     """List all vehicle categories."""
     queryset = VehicleCategory.objects.all()

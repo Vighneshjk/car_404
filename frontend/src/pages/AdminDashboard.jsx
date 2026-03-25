@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock, Filter, ShieldCheck, Car, User, MapPin } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Filter, ShieldCheck, Car, User, MapPin, Plus, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import api from '../utils/api';
 import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,17 +8,31 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('bookings');
     const [bookings, setBookings] = useState([]);
     const [users, setUsers] = useState([]);
+    const [services, setServices] = useState({ wash: [], ceramic: [] });
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
+    const [timeSlots, setTimeSlots] = useState([]);
     const [updatingId, setUpdatingId] = useState(null);
     const [selectedBooking, setSelectedBooking] = useState(null);
+    const [showServiceModal, setShowServiceModal] = useState(false);
+    const [editingService, setEditingService] = useState(null);
+    const [serviceFormData, setServiceFormData] = useState({
+        name: '',
+        description: '',
+        is_active: true,
+        image: null
+    });
 
     useEffect(() => {
         if (activeTab === 'bookings') {
             fetchBookings();
-        } else {
+        } else if (activeTab === 'users') {
             fetchUsers();
+        } else if (activeTab === 'timeslots') {
+            fetchTimeSlots();
+        } else {
+            fetchServices();
         }
     }, [activeTab]);
 
@@ -43,6 +57,61 @@ const AdminDashboard = () => {
             console.error('Error fetching admin users:', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchTimeSlots = async () => {
+        setLoading(true);
+        try {
+            const res = await api.get('/bookings/time-slots/manage/');
+            setTimeSlots(res.data.results || res.data);
+        } catch (err) {
+            console.error('Error fetching time slots:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchServices = async () => {
+        setLoading(true);
+        try {
+            const [washRes, ceramicRes] = await Promise.all([
+                api.get('/services/car-wash/'),
+                api.get('/services/ceramic-coating/')
+            ]);
+            setServices({
+                wash: washRes.data.results || washRes.data,
+                ceramic: ceramicRes.data.results || ceramicRes.data
+            });
+        } catch (err) {
+            console.error('Error fetching services:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleServiceSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('name', serviceFormData.name);
+        formData.append('description', serviceFormData.description);
+        formData.append('is_active', serviceFormData.is_active);
+        if (serviceFormData.image instanceof File) {
+            formData.append('image', serviceFormData.image);
+        }
+
+        try {
+            const endpoint = editingService.type === 'wash' 
+                ? `/services/admin/car-wash/${editingService.id}/` 
+                : `/services/admin/ceramic-coating/${editingService.id}/`;
+            
+            await api.patch(endpoint, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            setShowServiceModal(false);
+            fetchServices();
+        } catch (err) {
+            alert('Failed to update service.');
         }
     };
 
@@ -74,6 +143,11 @@ const AdminDashboard = () => {
     const filteredUsers = users.filter(u => {
         const us = JSON.stringify(u).toLowerCase();
         return us.includes(searchTerm.toLowerCase());
+    });
+
+    const filteredTimeSlots = timeSlots.filter(ts => {
+        const tss = JSON.stringify(ts).toLowerCase();
+        return tss.includes(searchTerm.toLowerCase());
     });
 
     const statusColors = {
@@ -110,11 +184,23 @@ const AdminDashboard = () => {
                             >
                                 Users
                             </button>
+                            <button
+                                onClick={() => setActiveTab('services')}
+                                className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'services' ? 'bg-primary text-white' : 'text-text-muted hover:text-white'}`}
+                            >
+                                Services
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('timeslots')}
+                                className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${activeTab === 'timeslots' ? 'bg-primary text-white' : 'text-text-muted hover:text-white'}`}
+                            >
+                                Time Slots
+                            </button>
                         </div>
                         <div className="relative flex-1 md:w-64">
                             <input
                                 type="text"
-                                placeholder={activeTab === 'bookings' ? "Search Bookings..." : "Search User Directory..."}
+                                placeholder={activeTab === 'bookings' ? "Search Bookings..." : activeTab === 'users' ? "Search User Directory..." : activeTab === 'timeslots' ? "Search Time Slots..." : "Search..."}
                                 className="w-full bg-white/5 border border-glass pl-6 pr-4 py-3 rounded-xl focus:border-primary outline-none transition-all font-medium"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -231,7 +317,7 @@ const AdminDashboard = () => {
                             )}
                         </AnimatePresence>
                     </div>
-                ) : (
+                ) : activeTab === 'users' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                         <AnimatePresence>
                             {filteredUsers.length === 0 ? (
@@ -279,6 +365,124 @@ const AdminDashboard = () => {
                                 ))
                             )}
                         </AnimatePresence>
+                    </div>
+                ) : activeTab === 'timeslots' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <AnimatePresence>
+                            {filteredTimeSlots.length === 0 ? (
+                                <motion.div
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                                    className="col-span-full glass p-20 text-center rounded-[2.5rem]"
+                                >
+                                    <p className="text-text-secondary text-lg font-medium">No time slots found in the system.</p>
+                                </motion.div>
+                            ) : (
+                                filteredTimeSlots.map((ts) => (
+                                    <motion.div
+                                        layout
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        key={ts.id}
+                                        className="glass-heavy p-8 rounded-[2rem] border border-glass hover:border-primary/30 transition-all flex flex-col justify-between"
+                                    >
+                                        <div>
+                                            <div className="flex items-center justify-between mb-6">
+                                                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-primary font-bold outfit text-xl">
+                                                    <Clock size={24} />
+                                                </div>
+                                                <span className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest ${ts.is_available ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                                                    {ts.is_available ? 'Available' : 'Full / Inactive'}
+                                                </span>
+                                            </div>
+                                            <div className="space-y-4">
+                                                <div>
+                                                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mb-1">Date</p>
+                                                    <p className="text-lg font-bold">{ts.date}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mb-1">Time Window</p>
+                                                    <p className="text-lg font-bold">{ts.start_time_display} - {ts.end_time_display}</p>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="bg-white/5 p-3 rounded-xl">
+                                                        <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mb-1">Capacity</p>
+                                                        <p className="text-sm font-bold">{ts.capacity} Bookings</p>
+                                                    </div>
+                                                    <div className="bg-white/5 p-3 rounded-xl">
+                                                        <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest mb-1">Available</p>
+                                                        <p className="text-sm font-bold text-primary">{ts.available_slots} Left</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
+                        </AnimatePresence>
+                    </div>
+                ) : (
+                    <div className="space-y-12">
+                        <div>
+                            <h2 className="text-2xl font-bold outfit mb-6 flex items-center gap-2"><Car className="text-primary" /> Car Wash Packages</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {services.wash.map(s => (
+                                    <div key={s.id} className="glass-heavy p-6 rounded-3xl border border-glass flex gap-6">
+                                        <div className="w-24 h-24 bg-white/5 rounded-2xl overflow-hidden border border-glass shrink-0">
+                                            {s.image ? (
+                                                <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-text-muted"><ImageIcon size={32} /></div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="font-bold outfit mb-1">{s.name}</h4>
+                                            <p className="text-xs text-text-muted line-clamp-2 mb-4">{s.description}</p>
+                                            <button 
+                                                onClick={() => {
+                                                    setEditingService({ ...s, type: 'wash' });
+                                                    setServiceFormData({ name: s.name, description: s.description, is_active: s.is_active, image: null });
+                                                    setShowServiceModal(true);
+                                                }}
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-white transition-colors"
+                                            >
+                                                <Edit2 size={12} /> Edit Package
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 className="text-2xl font-bold outfit mb-6 flex items-center gap-2"><ShieldCheck className="text-secondary" /> Ceramic Coatings</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {services.ceramic.map(s => (
+                                    <div key={s.id} className="glass-heavy p-6 rounded-3xl border border-glass flex gap-6">
+                                        <div className="w-24 h-24 bg-white/5 rounded-2xl overflow-hidden border border-glass shrink-0">
+                                            {s.image ? (
+                                                <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-text-muted"><ImageIcon size={32} /></div>
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <h4 className="font-bold outfit mb-1">{s.name}</h4>
+                                            <p className="text-xs text-text-muted line-clamp-2 mb-4">{s.description}</p>
+                                            <button 
+                                                onClick={() => {
+                                                    setEditingService({ ...s, type: 'ceramic' });
+                                                    setServiceFormData({ name: s.name, description: s.description, is_active: s.is_active, image: null });
+                                                    setShowServiceModal(true);
+                                                }}
+                                                className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-white transition-colors"
+                                            >
+                                                <Edit2 size={12} /> Edit Specs
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -417,6 +621,62 @@ const AdminDashboard = () => {
                                     )}
                                 </div>
                             </div>
+                        </motion.div>
+                    </div>
+                )}
+                {showServiceModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center px-5">
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            onClick={() => setShowServiceModal(false)}
+                            className="absolute inset-0 bg-deep/80 backdrop-blur-md"
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-deep border border-glass w-full max-w-lg rounded-[2.5rem] shadow-2xl relative z-10 p-10"
+                        >
+                            <h2 className="text-3xl font-bold outfit tracking-tight mb-8 uppercase">Modify Service <span className="text-primary italic">Specs.</span></h2>
+                            <form onSubmit={handleServiceSubmit} className="space-y-6">
+                                <div>
+                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Service Name</label>
+                                    <input 
+                                        type="text" 
+                                        value={serviceFormData.name}
+                                        onChange={e => setServiceFormData({...serviceFormData, name: e.target.value})}
+                                        className="w-full bg-white/5 border border-glass p-4 rounded-xl focus:border-primary outline-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Intel Description</label>
+                                    <textarea 
+                                        rows="4"
+                                        value={serviceFormData.description}
+                                        onChange={e => setServiceFormData({...serviceFormData, description: e.target.value})}
+                                        className="w-full bg-white/5 border border-glass p-4 rounded-xl focus:border-primary outline-none resize-none"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2 block">Service Visualization (Picture)</label>
+                                    <div className="relative group">
+                                        <input 
+                                            type="file" 
+                                            onChange={e => setServiceFormData({...serviceFormData, image: e.target.files[0]})}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                        />
+                                        <div className="w-full bg-white/5 border border-glass border-dashed p-8 rounded-xl flex flex-col items-center justify-center gap-3 group-hover:bg-white/10 transition-all overflow-hidden">
+                                            <ImageIcon className="text-text-muted" />
+                                            <span className="text-xs font-bold text-text-muted uppercase tracking-widest text-center truncate w-full px-4">
+                                                {serviceFormData.image ? serviceFormData.image.name : 'Upload New Image'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" className="w-full btn-primary py-4 font-bold uppercase tracking-widest rounded-2xl">
+                                    Apply Configuration
+                                </button>
+                            </form>
                         </motion.div>
                     </div>
                 )}

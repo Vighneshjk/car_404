@@ -9,7 +9,7 @@ class TimeSlot(models.Model):
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    capacity = models.PositiveIntegerField(default=5, help_text='Max simultaneous bookings')
+    capacity = models.PositiveIntegerField(default=3, help_text='Max simultaneous bookings')
     booked_count = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     notes = models.CharField(max_length=200, blank=True)

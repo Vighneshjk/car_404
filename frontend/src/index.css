@@ -717,8 +717,20 @@ h4,
     background: rgba(41, 121, 255, 0.2);
 }
 
-.bg-bg-deep {
+.bg-bg-deep, .bg-deep {
     background: var(--bg-deep);
+}
+
+.bg-accent-cyan {
+    background: var(--accent-cyan);
+}
+
+.bg-accent-cyan\/10 {
+    background: rgba(0, 229, 255, 0.1);
+}
+
+.bg-accent-cyan\/20 {
+    background: rgba(0, 229, 255, 0.2);
 }
 
 .bg-darker {

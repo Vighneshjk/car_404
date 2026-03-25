@@ -11,7 +11,7 @@ const Bookings = () => {
     const [submitting, setSubmitting] = useState(false);
     const [data, setData] = useState({ vehicles: [], timeSlots: [], parkingSlots: [], services: [], coatings: [], categories: [] });
     const [form, setForm] = useState({ vehicle: '', timeSlot: '', parkingSlot: '', selectedServices: [], selectedCoatings: [], specialRequests: '' });
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    const [selectedDate, setSelectedDate] = useState(new Date().toLocaleDateString('en-CA'));
     const [currentBookingId, setCurrentBookingId] = useState(null);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
     const [domSuccess, setDomSuccess] = useState(false);
@@ -117,7 +117,8 @@ const Bookings = () => {
                 owner_name: user?.full_name || ''
             });
         } catch (err) {
-            alert('Failed to register vehicle. Please check if registration number is unique.');
+            const errorMsg = err.response?.data?.registration_number?.[0] || err.response?.data?.error || err.response?.data?.detail || 'Failed to register vehicle. Please check if registration number is unique.';
+            alert(`Error: ${errorMsg}`);
         } finally {
             setRegistering(false);
         }
@@ -222,7 +223,12 @@ const Bookings = () => {
         if (!form.vehicle || !service?.pricing) return 0;
         const vehicle = data.vehicles.find(v => v.id === form.vehicle);
         if (!vehicle) return 0;
-        const pObj = service.pricing.find(p => p.vehicle_category === vehicle.category || p.vehicle_category?.id === vehicle.category);
+        
+        // Match by ID since pricing object contains full vehicle_category detail
+        const pObj = service.pricing.find(p => {
+            const pCatId = typeof p.vehicle_category === 'object' ? p.vehicle_category.id : p.vehicle_category;
+            return pCatId === vehicle.category;
+        });
         return pObj ? parseFloat(pObj.effective_price) : 0;
     };
 
@@ -509,9 +515,15 @@ const Bookings = () => {
                                         <ChevronLeft size={20} /> Back
                                     </button>
                                     <button
-                                        disabled={!form.timeSlot || !form.parkingSlot || submitting}
-                                        onClick={handleCreateBooking}
-                                        className="btn-primary py-4 px-12 flex items-center gap-3 text-xl font-bold disabled:opacity-50"
+                                        onClick={() => {
+                                            if (!form.timeSlot || !form.parkingSlot) {
+                                                alert("Please select both a time slot and a parking zone before confirming.");
+                                                return;
+                                            }
+                                            handleCreateBooking();
+                                        }}
+                                        disabled={submitting}
+                                        className={`btn-primary py-4 px-12 flex items-center gap-3 text-xl font-bold ${(!form.timeSlot || !form.parkingSlot) ? 'opacity-70' : ''}`}
                                     >
                                         {submitting ? 'Processing Booking...' : 'CONFIRM BOOKING'} <CheckCircle2 size={24} />
                                     </button>

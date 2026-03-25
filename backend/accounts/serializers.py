@@ -29,7 +29,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
+    password = serializers.CharField(write_only=True, min_length=4)
     password_confirm = serializers.CharField(write_only=True)
     phone = serializers.CharField(max_length=15, min_length=10)
 
@@ -47,18 +47,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password'] != data['password_confirm']:
             raise serializers.ValidationError({'password': 'Passwords do not match.'})
-        
-
-        password = data['password']
-        if not re.search(r'[A-Z]', password):
-            raise serializers.ValidationError({'password': 'Password must contain at least one uppercase letter.'})
-        if not re.search(r'[a-z]', password):
-            raise serializers.ValidationError({'password': 'Password must contain at least one lowercase letter.'})
-        if not re.search(r'\d', password):
-            raise serializers.ValidationError({'password': 'Password must contain at least one digit.'})
-        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-            raise serializers.ValidationError({'password': 'Password must contain at least one special character.'})
-            
         return data
 
     def create(self, validated_data):
